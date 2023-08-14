@@ -28,9 +28,18 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Send Teams notification
+        if: success()
+        uses: microsoft/teams-notification@v1
+        with:
+          webhook-url: https://publicisgroupe.webhook.office.com/webhookb2/3e1ab336-48ab-4d62-8506-2cff83848bff@d52c9ea1-7c21-47b1-82a3-33a74b1f74b8/IncomingWebhook/c0803599002b4509acee110c5188ba1c/f6fd956b-e39c-4b72-b71d-e0408216e360
+          title: "Gradle build successful"
+          summary: "The Gradle build on branch ${{ github.ref }} succeeded."
